@@ -1,0 +1,40 @@
+[package]
+name = "dnsproxy"
+version = "0.1.0"
+edition = "2024"
+authors = ["fokx", "dnsproxy contributors"]
+description = "A high-performance, resilient DNS proxy server supporting DNS-over-HTTPS (DoH), parallel querying, connection pooling, SOCKS5 proxies, caching, and IPv6 filtering."
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/fokx/dnsproxy"
+homepage = "https://github.com/fokx/dnsproxy"
+documentation = "https://docs.rs/dnsproxy"
+keywords = ["dns", "dns-proxy", "doh", "socks5", "resolver"]
+categories = ["network-programming", "command-line-utilities"]
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "README.md",
+    "LICENSE*",
+    "config.example.toml",
+    "config.toml",
+]
+
+[dependencies]
+clap = { version = "4.6", features = ["derive", "cargo"] }
+futures-util = "0.3.34"
+hickory-proto = "0.26.3"
+hickory-resolver = { version = "0.26.3", features = ["tokio"] }
+hickory-net = "0.26.3"
+reqwest = { version = "0.13.5", default-features = false, features = ["rustls", "socks"] }
+serde = { version = "1.0", features = ["derive"] }
+tokio = { version = "1.53", features = ["full"] }
+toml = "1.1"
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter", "fmt"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
+strip = true

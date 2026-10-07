@@ -1,0 +1,22 @@
+services:
+  dnsproxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dnsproxy:latest
+    container_name: dnsproxy
+    restart: unless-stopped
+    ports:
+      - "53000:53000/udp"
+      - "53000:53000/tcp"
+      # To bind standard port 53 directly (requires host root/privileged permissions):
+      # - "53:53/udp"
+      # - "53:53/tcp"
+    volumes:
+      - ./config.toml:/etc/dnsproxy/config.toml:ro
+      - dnsproxy_cache:/var/cache/dnsproxy
+    cap_add:
+      - NET_BIND_SERVICE
+
+volumes:
+  dnsproxy_cache:

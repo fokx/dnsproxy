@@ -1,0 +1,70 @@
+# Log level: trace, debug, info, warn, error
+log_level = "info"
+
+# DNS Bootstrap resolvers
+# Used to resolve domain names of upstreams and SOCKS5 proxy addresses.
+# If empty, the system resolver will be used.
+bootstrap = [
+    "1.1.1.1",
+    "9.9.9.9",
+    "223.5.5.5",
+    "114.114.114.114",
+    "8.8.8.8:53"
+]
+
+# Listen addresses (can specify multiple). Defaults to 127.0.0.1
+listen_addrs = ["127.0.0.1"]
+# listen_addrs = ["0.0.0.0"] # IPv4 all interfaces
+# listen_addrs = ["::"]      # IPv4 + IPv6 all interfaces
+
+# Listen ports (can specify multiple). Defaults to 53
+listen_ports = [53000]
+
+# Upstream resolution strategy:
+# - "parallel": Query all upstreams concurrently, returning the fastest valid response (default)
+# - "round_robin" (or "load_balance"): Cycle through upstreams with failover
+upstream_mode = "parallel"
+
+# Upstream query timeout (e.g. "5s", "10s", "500ms")
+timeout = "10s"
+
+# Upstream DNS servers
+# Supported protocols:
+# - DNS-over-HTTPS (DoH): https://...
+# - Plain UDP DNS: 1.1.1.1, 8.8.8.8:53, udp://9.9.9.9:53, or domain names
+# - SOCKS5 proxy routing: configure inline table with socks5 URL and optional credentials
+upstreams = [
+    "https://1.1.1.1/dns-query",
+    "https://9.9.9.9/dns-query",
+    # DoH via SOCKS5 proxy:
+    # { url = "https://8.8.4.4/dns-query", socks5 = "socks5://127.0.0.1:1080" },
+    # DoH via authenticated SOCKS5 proxy:
+    # { url = "https://8.8.4.4/dns-query", socks5 = "socks5://127.0.0.1:1080", username = "user", password = "password" },
+]
+
+# Cache configuration
+cache = true
+
+# Path to disk cache file for persistence across restarts.
+# If unset or commented out, caching remains in RAM only.
+cache_file = "/tmp/dnsproxy-cache.toml"
+
+# Maximum cache memory/disk size limit (e.g. "50M", "100MB", "1G")
+max_cache_size = "50M"
+
+# Maximum cache TTL retention period (e.g. "1d", "12h", "1d1h1m1s").
+# Records with lower DNS TTL will respect their DNS TTL.
+max_cache_ttl = "1d"
+
+# Rate limiter: maximum concurrent queries (0 to disable)
+ratelimit = 0
+
+# IPv6 (AAAA) filtering:
+# When true, AAAA records are stripped from responses unless domain matches whitelist
+ipv6_disabled = false
+
+# Whitelist domains to retain AAAA records when ipv6_disabled = true. Supports wildcards.
+ipv6_whitelist = [
+    "example.org",
+    "*.example.com",
+]
